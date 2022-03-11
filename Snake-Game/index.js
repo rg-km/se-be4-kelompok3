@@ -9,7 +9,10 @@ const DIRECTION = {
     UP: 2,
     DOWN: 3,
 }
-const MOVE_INTERVAL = 150;
+let MOVE_INTERVAL = 150;
+
+//variable untuk nambah kecepatan
+const Kecepatan = [{ level: 1, value: MOVE_INTERVAL},{ level: 2, value: MOVE_INTERVAL-80},{ level: 3, value: MOVE_INTERVAL-120},{ level: 4, value: MOVE_INTERVAL-200},{ level: 5, value: MOVE_INTERVAL-300}];
 
 function initPosition() {
     return {
@@ -36,11 +39,12 @@ function initSnake(color) {
         color: color,
         ...initHeadAndBody(),
         direction: initDirection(),
-        score: 0,
+        point: 0,
+        level : 1
     }
 }
 let snake1 = initSnake("purple");
-let snake2 = initSnake("blue");
+// let snake2 = initSnake("blue");
 
 let apple = {
     color: "red",
@@ -73,10 +77,11 @@ function drawScore(snake) {
     scoreCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     scoreCtx.font = "30px Arial";
     scoreCtx.fillStyle = snake.color
-    scoreCtx.fillText(snake.score, 10, scoreCanvas.scrollHeight / 2);
+    scoreCtx.fillText(snake.point, 10, scoreCanvas.scrollHeight / 2);
 }
 
 function draw() {
+    MunculinLevel(snake1.point);
     setInterval(function() {
         let snakeCanvas = document.getElementById("snakeBoard");
         let ctx = snakeCanvas.getContext("2d");
@@ -87,15 +92,15 @@ function draw() {
         for (let i = 1; i < snake1.body.length; i++) {
             drawCell(ctx, snake1.body[i].x, snake1.body[i].y, snake1.color);
         }
-        drawCell(ctx, snake2.head.x, snake2.head.y, snake2.color);
-        for (let i = 1; i < snake2.body.length; i++) {
-            drawCell(ctx, snake2.body[i].x, snake2.body[i].y, snake2.color);
-        }
+        // drawCell(ctx, snake2.head.x, snake2.head.y, snake2.color);
+        // for (let i = 1; i < snake2.body.length; i++) {
+        //     drawCell(ctx, snake2.body[i].x, snake2.body[i].y, snake2.color);
+        // }
         drawCell(ctx, apple.position.x, apple.position.y, apple.color,"gambarapple");
         drawCell(ctx, apple1.position.x, apple1.position.y, apple1.color,"gambarapple");
 
         drawScore(snake1);
-        drawScore(snake2);
+        // drawScore(snake2);
     }, REDRAW_INTERVAL);
 }
 
@@ -117,8 +122,9 @@ function teleport(snake) {
 function eat(snake, apple) {
     if (snake.head.x == apple.position.x && snake.head.y == apple.position.y) {
         apple.position = initPosition();
-        snake.score++;
+        snake.point++;
         snake.body.push({x: snake.head.x, y: snake.head.y});
+        MunculinLevel(snake.point);
     }
 }
 
@@ -127,6 +133,7 @@ function moveLeft(snake) {
     teleport(snake);
     eat(snake, apple);
     eat(snake, apple1);
+    
 }
 
 function moveRight(snake) {
@@ -165,7 +172,7 @@ function checkCollision(snakes) {
     if (isCollide) {
         alert("Game over");
         snake1 = initSnake("purple");
-        snake2 = initSnake("blue");
+        // snake2 = initSnake("blue");
     }
     return isCollide;
 }
@@ -186,7 +193,7 @@ function move(snake) {
             break;
     }
     moveBody(snake);
-    if (!checkCollision([snake1, snake2])) {
+    if (!checkCollision([snake1])) {
         setTimeout(function() {
             move(snake);
         }, MOVE_INTERVAL);
@@ -224,20 +231,45 @@ document.addEventListener("keydown", function (event) {
         turn(snake1, DIRECTION.DOWN);
     }
 
-    if (event.key === "a") {
-        turn(snake2, DIRECTION.LEFT);
-    } else if (event.key === "d") {
-        turn(snake2, DIRECTION.RIGHT);
-    } else if (event.key === "w") {
-        turn(snake2, DIRECTION.UP);
-    } else if (event.key === "s") {
-        turn(snake2, DIRECTION.DOWN);
-    }
+    // if (event.key === "a") {
+    //     turn(snake2, DIRECTION.LEFT);
+    // } else if (event.key === "d") {
+    //     turn(snake2, DIRECTION.RIGHT);
+    // } else if (event.key === "w") {
+    //     turn(snake2, DIRECTION.UP);
+    // } else if (event.key === "s") {
+    //     turn(snake2, DIRECTION.DOWN);
+    // }
 })
+
+//munculin level game
+function MunculinLevel(point) {
+    let level = document.getElementById("LevelGame");
+    let Context = level.getContext("2d");
+    if (point == 0) {
+        Context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        Context.font = "50px arial";
+        Context.fillStyle = snake1.color
+        Context.fillText(snake1.level, 10, level.scrollHeight / 2);
+    } else if ((point % 5) == 0) {
+        snake1.level++;
+        Context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        Context.font = "50px arial";
+        Context.fillStyle = snake1.color
+        Context.fillText(snake1.level, 10, level.scrollHeight / 2);
+        // soundLevelUp();
+    }
+    //untuk kecepatannya
+    for (var i = 0; i < Kecepatan.length; i++) {
+        if (snake1.level == Kecepatan[i].level) {
+            MOVE_INTERVAL = Kecepatan[i].value;
+        }
+    }
+}
 
 function initGame() {
     move(snake1);
-    move(snake2);
+    // move(snake2);
 }
 
 initGame();
