@@ -65,6 +65,22 @@ function drawCell(ctx, x, y, color,imageapple = null) {
     }
 }
 
+//menampilkan kecepatan
+function drawSpeed(snake) {
+    let speedCanvas;
+    speedCanvas = document.getElementById("KecepatanUlar");
+    let speedCtx = speedCanvas.getContext("2d");
+
+    speedCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+    speedCtx.font = "30px Arial";
+    speedCtx.fillStyle = "purple";
+    for (var i = 0; i < Kecepatan.length; i++) {
+        if (snake.level == Kecepatan[i].level) {
+            speedCtx.fillText(Kecepatan[i].value, 10, speedCanvas.scrollHeight / 2);
+        }
+    }
+}
+
 function drawScore(snake) {
     let scoreCanvas;
     if (snake.color == snake1.color) {
@@ -79,6 +95,7 @@ function drawScore(snake) {
     scoreCtx.fillStyle = snake.color
     scoreCtx.fillText(snake.point, 10, scoreCanvas.scrollHeight / 2);
 }
+
 
 function draw() {
     MunculinLevel(snake1.point);
@@ -101,6 +118,7 @@ function draw() {
 
         drawScore(snake1);
         // drawScore(snake2);
+        drawSpeed(snake1)
     }, REDRAW_INTERVAL);
 }
 
@@ -248,16 +266,15 @@ function MunculinLevel(point) {
     let Context = level.getContext("2d");
     if (point == 0) {
         Context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-        Context.font = "50px arial";
+        Context.font = "30px arial";
         Context.fillStyle = snake1.color
         Context.fillText(snake1.level, 10, level.scrollHeight / 2);
     } else if ((point % 5) == 0) {
         snake1.level++;
         Context.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
-        Context.font = "50px arial";
+        Context.font = "30px arial";
         Context.fillStyle = snake1.color
         Context.fillText(snake1.level, 10, level.scrollHeight / 2);
-        // soundLevelUp();
     }
     //untuk kecepatannya
     for (var i = 0; i < Kecepatan.length; i++) {
@@ -266,6 +283,7 @@ function MunculinLevel(point) {
         }
     }
 }
+
 
 function initGame() {
     move(snake1);
