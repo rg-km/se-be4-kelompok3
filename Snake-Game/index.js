@@ -75,8 +75,8 @@ function draw() {
         ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
         
         //gambar kepala ular 1
-        //let img = document.getElementById("snakeHead1");
-        //ctx.drawImage(img, snake1.head.x, snake1.head.y, CELL_SIZE, CELL_SIZE);
+        let snake1img = document.getElementById("snakeHead1");
+        ctx.drawImage(snake1img, snake1.head.x*CELL_SIZE, snake1.head.y*CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         //drawCell(ctx, snake1.head.x, snake1.head.y, snake1.color);
 
@@ -84,16 +84,22 @@ function draw() {
         for (let i = 1; i < snake1.body.length; i++) {
             drawCell(ctx, snake1.body[i].x, snake1.body[i].y, snake1.color);
         }
-        drawCell(ctx, snake2.head.x, snake2.head.y, snake2.color);
+
+        //gambar kepala ular 2
+        let snake2img = document.getElementById("snakeHead2");
+        ctx.drawImage(snake2img, snake2.head.x*CELL_SIZE, snake2.head.y*CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        
+        //drawCell(ctx, snake2.head.x, snake2.head.y, snake2.color);
         for (let i = 1; i < snake2.body.length; i++) {
             drawCell(ctx, snake2.body[i].x, snake2.body[i].y, snake2.color);
         }
         
         //drawCell(ctx, apple.position.x, apple.position.y, apple.color);
 
-        let img = document.getElementById("apple");
+        //gambar apel
+        let appleimg = document.getElementById("apple");
         
-        ctx.drawImage(img, apple.position.x * CELL_SIZE, apple.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.drawImage(appleimg, apple.position.x * CELL_SIZE, apple.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         drawScore(snake1);
         drawScore(snake2);
