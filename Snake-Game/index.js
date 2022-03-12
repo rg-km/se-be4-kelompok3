@@ -208,6 +208,9 @@ function checkCollision(snakes) {
         snake1.level = 1;
         snake1.point = 0;
         snake1.speed = MOVE_INTERVAL;
+        var music = new Audio('assets/GameOver.mp3');
+        alert("GameOver");
+        music.play();
         MunculinLevel(snake1.point);
     }
     return isCollide;
