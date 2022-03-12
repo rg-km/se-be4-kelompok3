@@ -12,7 +12,7 @@ const DIRECTION = {
 let MOVE_INTERVAL = 150;
 
 //variable untuk nambah kecepatan
-const Kecepatan = [{ level: 1, value: MOVE_INTERVAL},{ level: 2, value: MOVE_INTERVAL-80},{ level: 3, value: MOVE_INTERVAL-120},{ level: 4, value: MOVE_INTERVAL-200},{ level: 5, value: MOVE_INTERVAL-300}];
+const Kecepatan = [{ level: 1, value: MOVE_INTERVAL},{ level: 2, value: MOVE_INTERVAL-25},{ level: 3, value: MOVE_INTERVAL-40},{ level: 4, value: MOVE_INTERVAL-45},{ level: 5, value: MOVE_INTERVAL-50}];
 
 function initPosition() {
     return {
@@ -43,7 +43,7 @@ function initSnake(color) {
         level : 1
     }
 }
-let snake1 = initSnake("purple");
+let snake1 = initSnake("black");
 // let snake2 = initSnake("blue");
 
 let apple = {
@@ -73,7 +73,7 @@ function drawSpeed(snake) {
 
     speedCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     speedCtx.font = "30px Arial";
-    speedCtx.fillStyle = "purple";
+    speedCtx.fillStyle = "black";
     for (var i = 0; i < Kecepatan.length; i++) {
         if (snake.level == Kecepatan[i].level) {
             speedCtx.fillText(Kecepatan[i].value, 10, speedCanvas.scrollHeight / 2);
@@ -175,6 +175,22 @@ function moveUp(snake) {
     eat(snake, apple1);
 }
 
+function suaraUP(){
+    var music = new Audio('assets/Level-Up-Sound-Effect.mp3');
+    alert("Level Up");
+    music.play();
+}
+
+function Snake(snake) {
+    return {
+        color: snake.color,
+        ...initHeadAndBody(),
+        direction: initDirection(),
+        point: snake.point,
+        level: snake.level,
+    }
+}
+
 function checkCollision(snakes) {
     let isCollide = false;
     //this
@@ -188,9 +204,11 @@ function checkCollision(snakes) {
         }
     }
     if (isCollide) {
-        alert("Game over");
-        snake1 = initSnake("purple");
-        // snake2 = initSnake("blue");
+        snake1 = Snake(snake1);
+        snake1.level = 1;
+        snake1.point = 0;
+        snake1.speed = MOVE_INTERVAL;
+        MunculinLevel(snake1.point);
     }
     return isCollide;
 }
@@ -275,6 +293,7 @@ function MunculinLevel(point) {
         Context.font = "30px arial";
         Context.fillStyle = snake1.color
         Context.fillText(snake1.level, 10, level.scrollHeight / 2);
+        suaraUP();
     }
     //untuk kecepatannya
     for (var i = 0; i < Kecepatan.length; i++) {
@@ -283,7 +302,6 @@ function MunculinLevel(point) {
         }
     }
 }
-
 
 function initGame() {
     move(snake1);
