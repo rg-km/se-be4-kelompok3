@@ -99,7 +99,7 @@ function draw() {
         //gambar apel
         //let appleimg = document.getElementById("apple");
         
-        //ctx.drawImage(appleimg, apple.position.x * CELL_SIZE, apple.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        ctx.drawImage(appleimg, apple.position.x * CELL_SIZE, apple.position.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
 
         drawScore(snake1);
         drawScore(snake2);
