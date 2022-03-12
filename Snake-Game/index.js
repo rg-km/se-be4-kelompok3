@@ -20,6 +20,13 @@ function initPosition() {
         y: Math.floor(Math.random() * HEIGHT),
     }
 }
+let TotalNyawa = 3;
+let NyawaUlar = {
+    type: "nyawa",
+    color: "red",
+    img: document.getElementById("nyawa"),
+    position: initPosition(),
+}
 
 function initHeadAndBody() {
     let head = initPosition();
@@ -40,11 +47,11 @@ function initSnake(color) {
         ...initHeadAndBody(),
         direction: initDirection(),
         point: 0,
+        Nyawa: TotalNyawa, 
         level : 1
     }
 }
 let snake1 = initSnake("black");
-// let snake2 = initSnake("blue");
 
 let apple = {
     color: "red",
@@ -109,16 +116,12 @@ function draw() {
         for (let i = 1; i < snake1.body.length; i++) {
             drawCell(ctx, snake1.body[i].x, snake1.body[i].y, snake1.color);
         }
-        // drawCell(ctx, snake2.head.x, snake2.head.y, snake2.color);
-        // for (let i = 1; i < snake2.body.length; i++) {
-        //     drawCell(ctx, snake2.body[i].x, snake2.body[i].y, snake2.color);
-        // }
         drawCell(ctx, apple.position.x, apple.position.y, apple.color,"gambarapple");
         drawCell(ctx, apple1.position.x, apple1.position.y, apple1.color,"gambarapple");
 
         drawScore(snake1);
-        // drawScore(snake2);
-        drawSpeed(snake1)
+        drawSpeed(snake1);
+        nyawa(snake1);
     }, REDRAW_INTERVAL);
 }
 
@@ -141,8 +144,25 @@ function eat(snake, apple) {
     if (snake.head.x == apple.position.x && snake.head.y == apple.position.y) {
         apple.position = initPosition();
         snake.point++;
-        snake.body.push({x: snake.head.x, y: snake.head.y});
+        if(apple.type == "nyawa"){
+            snake.Nyawa++;
+        }else{
+            snake.body.push({x: snake.head.x, y: snake.head.y});
+        }
         MunculinLevel(snake.point);
+    }
+}
+//membuat nyawa
+function nyawa(snake){
+    let snakeCanvas = document.getElementById("snakeBoard");
+    let ctx = snakeCanvas.getContext("2d");
+
+    if (snake.point % 2 == 0 && snake.point > 0) {
+        drawCell(ctx, NyawaUlar.position.x, NyawaUlar.position.y, NyawaUlar.color, "nyawa");
+
+    }
+    for (var i = 0; i < snake.Nyawa; i++) {
+        ctx.drawImage(document.getElementById("nyawa"),(i * 15)+15, 15, 25, 25);
     }
 }
 
@@ -151,7 +171,7 @@ function moveLeft(snake) {
     teleport(snake);
     eat(snake, apple);
     eat(snake, apple1);
-    
+    eat(snake,NyawaUlar);
 }
 
 function moveRight(snake) {
@@ -159,6 +179,7 @@ function moveRight(snake) {
     teleport(snake);
     eat(snake, apple);
     eat(snake, apple1);
+    eat(snake,NyawaUlar);
 }
 
 function moveDown(snake) {
@@ -166,6 +187,7 @@ function moveDown(snake) {
     teleport(snake);
     eat(snake, apple);
     eat(snake, apple1);
+    eat(snake, NyawaUlar);
 }
 
 function moveUp(snake) {
@@ -173,6 +195,7 @@ function moveUp(snake) {
     teleport(snake);
     eat(snake, apple);
     eat(snake, apple1);
+    eat(snake,NyawaUlar);
 }
 
 function suaraUP(){
@@ -187,6 +210,7 @@ function Snake(snake) {
         ...initHeadAndBody(),
         direction: initDirection(),
         point: snake.point,
+        Nyawa: snake.Nyawa,
         level: snake.level,
     }
 }
@@ -203,14 +227,18 @@ function checkCollision(snakes) {
             }
         }
     }
+    //ngatur levelup nya disini
     if (isCollide) {
-        snake1 = Snake(snake1);
-        snake1.level = 1;
-        snake1.point = 0;
-        snake1.speed = MOVE_INTERVAL;
-        var music = new Audio('assets/GameOver.mp3');
-        alert("GameOver");
-        music.play();
+        if (snake1.Nyawa === 1) {
+            var audio = new Audio('assets/GameOver.mp3');
+            audio.play();
+            alert("Game Over")
+            snake1 = initSnake("black");
+            console.log(snake1);
+        } else {
+            snake1.Nyawa--;
+            snake1 = Snake(snake1);
+        }
         MunculinLevel(snake1.point);
     }
     return isCollide;
@@ -270,15 +298,6 @@ document.addEventListener("keydown", function (event) {
         turn(snake1, DIRECTION.DOWN);
     }
 
-    // if (event.key === "a") {
-    //     turn(snake2, DIRECTION.LEFT);
-    // } else if (event.key === "d") {
-    //     turn(snake2, DIRECTION.RIGHT);
-    // } else if (event.key === "w") {
-    //     turn(snake2, DIRECTION.UP);
-    // } else if (event.key === "s") {
-    //     turn(snake2, DIRECTION.DOWN);
-    // }
 })
 
 //munculin level game
@@ -308,7 +327,6 @@ function MunculinLevel(point) {
 
 function initGame() {
     move(snake1);
-    // move(snake2);
 }
 
 initGame();
