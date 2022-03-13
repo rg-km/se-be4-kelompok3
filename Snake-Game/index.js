@@ -175,9 +175,9 @@ function draw() {
         ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
         MunculinTembok(ctx,snake1)
         
-        drawCell(ctx, snake1.head.x, snake1.head.y, snake1.color);
+        drawCell(ctx, snake1.head.x, snake1.head.y, snake1.color, "kepalaUlar");
         for (let i = 1; i < snake1.body.length; i++) {
-            drawCell(ctx, snake1.body[i].x, snake1.body[i].y, snake1.color);
+            drawCell(ctx, snake1.body[i].x, snake1.body[i].y, snake1.color,"Badan");
         }
         drawCell(ctx, apple.position.x, apple.position.y, apple.color,"gambarapple");
         drawCell(ctx, apple1.position.x, apple1.position.y, apple1.color,"gambarapple");
@@ -225,7 +225,7 @@ function nyawa(snake){
 
     }
     for (var i = 0; i < snake.Nyawa; i++) {
-        ctx.drawImage(document.getElementById("nyawa"),(i * 15)+15, 15, 25, 25);
+        ctx.drawImage(document.getElementById("nyawa"),(i * 20)+15, 15, 20, 20);
     }
 }
 
