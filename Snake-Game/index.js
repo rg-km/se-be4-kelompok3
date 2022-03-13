@@ -9,6 +9,40 @@ const DIRECTION = {
     UP: 2,
     DOWN: 3,
 }
+const TEMBOKS = [
+    {
+        level: 2,
+        tembok: [
+            {
+                position: PosisiTembok(80, 100, 200, 15),
+                color: "black"
+            },
+        ]
+    },
+    {
+        level: 3,
+        tembok: [
+            {
+                position: PosisiTembok(60, 150, 250, 10),
+                color: "black"
+            }
+        ]
+    },
+    {
+        level: 5,
+        tembok: [
+            {
+                position: PosisiTembok(80, 100, 200, 15),
+                color: "black"
+            },
+            {
+                position: PosisiTembok(160, 200, 50, 150),//x,y,panjang,tingi
+                color: "black"
+            },
+        ]
+    }
+]
+
 let MOVE_INTERVAL = 150;
 
 //variable untuk nambah kecepatan
@@ -20,6 +54,34 @@ function initPosition() {
         y: Math.floor(Math.random() * HEIGHT),
     }
 }
+
+function PosisiTembok(x,y,width,height){
+    return{
+        x: x,
+        y: y,
+        width: width,
+        height: height
+    }
+}
+
+//untuk menggambar tembok
+function MunculinTembok(ctx,snake) {
+    for (let i = 0; i < TEMBOKS.length; i++) { //untuk mengecek tembok dan obstacle
+        for (let j = 0; j < TEMBOKS[i].tembok.length; j++) {
+            if (snake.level == TEMBOKS[i].level) {
+                if (TEMBOKS[i].tembok.length > 0) {
+                    ctx.fillStyle = TEMBOKS[i].tembok[j].color;
+                    //jika ada tembok maka akan digambar
+                    ctx.fillRect(TEMBOKS[i].tembok[j].position.x, 
+                        TEMBOKS[i].tembok[j].position.y, 
+                        TEMBOKS[i].tembok[j].position.width, 
+                        TEMBOKS[i].tembok[j].position.height);
+                }
+            }
+        }
+    }
+}
+
 let TotalNyawa = 3;
 let NyawaUlar = {
     type: "nyawa",
@@ -51,6 +113,7 @@ function initSnake(color) {
         level : 1
     }
 }
+
 let snake1 = initSnake("black");
 
 let apple = {
@@ -81,7 +144,7 @@ function drawSpeed(snake) {
     speedCtx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
     speedCtx.font = "30px Arial";
     speedCtx.fillStyle = "black";
-    for (var i = 0; i < Kecepatan.length; i++) {
+    for (var i = 0; i < Kecepatan.length; i++) { 
         if (snake.level == Kecepatan[i].level) {
             speedCtx.fillText(Kecepatan[i].value, 10, speedCanvas.scrollHeight / 2);
         }
@@ -103,7 +166,6 @@ function drawScore(snake) {
     scoreCtx.fillText(snake.point, 10, scoreCanvas.scrollHeight / 2);
 }
 
-
 function draw() {
     MunculinLevel(snake1.point);
     setInterval(function() {
@@ -111,6 +173,7 @@ function draw() {
         let ctx = snakeCanvas.getContext("2d");
 
         ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+        MunculinTembok(ctx,snake1)
         
         drawCell(ctx, snake1.head.x, snake1.head.y, snake1.color);
         for (let i = 1; i < snake1.body.length; i++) {
@@ -198,12 +261,6 @@ function moveUp(snake) {
     eat(snake,NyawaUlar);
 }
 
-function suaraUP(){
-    var music = new Audio('assets/Level-Up-Sound-Effect.mp3');
-    alert("Level Up");
-    music.play();
-}
-
 function Snake(snake) {
     return {
         color: snake.color,
@@ -227,19 +284,32 @@ function checkCollision(snakes) {
             }
         }
     }
-    //ngatur levelup nya disini
+    
+    //jika menabrak akan mengurangi nyawa
+    for (let i = 0; i < TEMBOKS.length; i++) { // perulangan total tembok perlevel
+        for (let j = 0; j < TEMBOKS[i].tembok.length; j++) {  // cek total tembok
+            if (snake1.level == TEMBOKS[i].level && TEMBOKS[i].tembok.length > 0) { // cek apakah tembok level nya sama dengan level si snake
+                //untuk membuat kotak nya
+                if (snake1.head.y >= (Math.floor(TEMBOKS[i].tembok[j].position.y / CELL_SIZE)) && snake1.head.x >= (Math.floor(TEMBOKS[i].tembok[j].position.x / CELL_SIZE))
+                    && snake1.head.x < (Math.floor(TEMBOKS[i].tembok[j].position.x / CELL_SIZE) + Math.ceil(TEMBOKS[i].tembok[j].position.width / (CANVAS_SIZE / CELL_SIZE))) 
+                    && snake1.head.y <= (Math.floor(TEMBOKS[i].tembok[j].position.height / (CANVAS_SIZE / CELL_SIZE))) + Math.floor(TEMBOKS[i].tembok[j].position.y / CELL_SIZE)) {
+                    isCollide = true;
+                }
+            }
+        }
+    }
+
     if (isCollide) {
         if (snake1.Nyawa === 1) {
             var audio = new Audio('assets/GameOver.mp3');
-            audio.play();
             alert("Game Over")
+            audio.play();
             snake1 = initSnake("black");
-            console.log(snake1);
+            MunculinLevel(snake1.point);
         } else {
             snake1.Nyawa--;
             snake1 = Snake(snake1);
         }
-        MunculinLevel(snake1.point);
     }
     return isCollide;
 }
@@ -315,7 +385,9 @@ function MunculinLevel(point) {
         Context.font = "30px arial";
         Context.fillStyle = snake1.color
         Context.fillText(snake1.level, 10, level.scrollHeight / 2);
-        suaraUP();
+        var music = new Audio('assets/Level-Up-Sound-Effect.mp3');
+        alert("Level Up");
+        music.play();
     }
     //untuk kecepatannya
     for (var i = 0; i < Kecepatan.length; i++) {
