@@ -29,6 +29,20 @@ const TEMBOKS = [
         ]
     },
     {
+        level: 4,
+        tembok: [
+            {
+                position: PosisiTembok(70, 200, 100, 15),
+                color: "black"
+            },
+            {
+                position: PosisiTembok(100, 100, 50, 50),
+                color: "black"
+            }
+        ]
+    },
+
+    {
         level: 5,
         tembok: [
             {
@@ -150,7 +164,7 @@ function drawSpeed(snake) {
         }
     }
 }
-
+// function untuk menampilkan score 
 function drawScore(snake) {
     let scoreCanvas;
     if (snake.color == snake1.color) {
@@ -228,7 +242,7 @@ function nyawa(snake){
         ctx.drawImage(document.getElementById("nyawa"),(i * 20)+15, 15, 20, 20);
     }
 }
-
+//function kondisi ular 
 function moveLeft(snake) {
     snake.head.x--;
     teleport(snake);
@@ -298,7 +312,7 @@ function checkCollision(snakes) {
             }
         }
     }
-
+//jika ikon nyawa sama dengan 1 maka audio game over akan dipanggil
     if (isCollide) {
         if (snake1.Nyawa === 1) {
             var audio = new Audio('assets/GameOver.mp3');
@@ -313,7 +327,7 @@ function checkCollision(snakes) {
     }
     return isCollide;
 }
-
+// function untuk mengontrol geraknya 
 function move(snake) {
     switch (snake.direction) {
         case DIRECTION.LEFT:
